@@ -22,7 +22,7 @@
             ctx,
             lastTime,
             fish = [], // all fish objects
-            fishCount = 20 + (Math.floor(Math.random() * 30) + 1), // total number of fish - from 21 to 50
+            fishCount = 30 + (Math.floor(Math.random() * 30) + 1), // total number of fish - from 31 to 60
             fishSpecs = [ // specs for new fish objects
               {
                 type: "small",
@@ -109,20 +109,6 @@
               startX = Math.floor(Math.random() * AQUARIUM.width + 1),
               startY = Math.floor(Math.random() * AQUARIUM.height + 1);
 
-          /*
-            I'm going to need to get the fish moving. Fortunately, loading both of the sprite sheets is out of the way.
-
-            I'm going to need to get the fish moving at a random heading. This would involve picking a random direction (radians)
-
-            ^ That's a move complicated issue.
-
-            Unrelated - the fish need to move from right to left. When it collides with the wall, it needs to reverse directions.
-
-            1) Moving and reversing (collision detection)
-            2) Changing sprite
-            3) Adding complexity to the movement by picking random headings + vertical collision detection
-          */
-
           // If the object's width extends offscreen, move it left so it fits
           if (startX + currChoice.size[0] > AQUARIUM.width) {
             startX -= currChoice.size[0];
@@ -136,11 +122,28 @@
           newFish.pos = [startX, startY];
           newFish.type = currChoice.type;
           newFish.size = currChoice.size;
-          newFish.dx = currChoice.speed;
           newFish.color = currColor.name;
           newFish.leftSprite = new Sprite("images/sprites-left.png", currColor.pos, currChoice.size);
           newFish.rightSprite = new Sprite("images/sprites-right.png", currColor.pos, currChoice.size);
+
+          newFish.dx = currChoice.speed;
           newFish.sprite = newFish.rightSprite;
+
+          if (Math.random() < 0.5) {
+            newFish.dx = currChoice.speed + (Math.floor(Math.random() * 20));
+            newFish.sprite = newFish.rightSprite;
+          }
+          else {
+            newFish.dx = -currChoice.speed - Math.floor((Math.random() * 20));
+            newFish.sprite = newFish.leftSprite;
+          }
+
+          if (Math.random() < 0.5) {
+            newFish.dy = Math.floor(currChoice.speed / 2) + (Math.random() * 30);
+          }
+          else {
+            newFish.dy = Math.floor(-currChoice.speed / 2) - (Math.random() * 30);
+          }
 
           return newFish;
         }
@@ -197,8 +200,11 @@
 
           for (var i = 0, len = fish.length; i < len; i++) {
             xPos = fish[i].pos[0];
+            yPos = fish[i].pos[1];
             dx = fish[i].dx;
+            dy = fish[i].dy;
             width = fish[i].size[0];
+            height = fish[i].size[1];
 
             if (xPos + width + (dx * dt) > AQUARIUM.width || xPos + (dx * dt) < 0) {
               fish[i].dx = -dx;
@@ -210,7 +216,12 @@
               }
             }
 
+            if (yPos + height + (dy * dt) > AQUARIUM.height || yPos + (dy * dt) < 0) {
+              fish[i].dy = -dy;
+            }
+
             fish[i].pos[0] += (fish[i].dx * dt);
+            fish[i].pos[1] += (fish[i].dy * dt);
           }
         }
 
