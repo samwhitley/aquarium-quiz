@@ -27,6 +27,7 @@
               {
                 type: "small",
                 size: [57, 26],
+                speed: 100,
                 colors: [
                   {
                     name: "green",
@@ -45,6 +46,7 @@
               {
                 type: "medium",
                 size: [88, 44],
+                speed: 75,
                 colors: [
                   {
                     name: "green",
@@ -63,6 +65,7 @@
               {
                 type: "large",
                 size: [97, 101],
+                speed: 50,
                 colors: [
                   {
                     name: "green",
@@ -106,6 +109,20 @@
               startX = Math.floor(Math.random() * AQUARIUM.width + 1),
               startY = Math.floor(Math.random() * AQUARIUM.height + 1);
 
+          /*
+            I'm going to need to get the fish moving. Fortunately, loading both of the sprite sheets is out of the way.
+
+            I'm going to need to get the fish moving at a random heading. This would involve picking a random direction (radians)
+
+            ^ That's a move complicated issue.
+
+            Unrelated - the fish need to move from right to left. When it collides with the wall, it needs to reverse directions.
+
+            1) Moving and reversing (collision detection)
+            2) Changing sprite
+            3) Adding complexity to the movement by picking random headings + vertical collision detection
+          */
+
           // If the object's width extends offscreen, move it left so it fits
           if (startX + currChoice.size[0] > AQUARIUM.width) {
             startX -= currChoice.size[0];
@@ -118,8 +135,12 @@
 
           newFish.pos = [startX, startY];
           newFish.type = currChoice.type;
+          newFish.size = currChoice.size;
+          newFish.dx = currChoice.speed;
           newFish.color = currColor.name;
-          newFish.sprite = new Sprite("images/sprite-sheet.png", currColor.pos, currChoice.size);
+          newFish.leftSprite = new Sprite("images/sprites-left.png", currColor.pos, currChoice.size);
+          newFish.rightSprite = new Sprite("images/sprites-right.png", currColor.pos, currChoice.size);
+          newFish.sprite = newFish.rightSprite;
 
           return newFish;
         }
@@ -143,7 +164,7 @@
             fish.push(newFish());
           }
 
-          resources.load("images/sprite-sheet.png");
+          resources.load(["images/sprites-left.png", "images/sprites-right.png"]);
           resources.onReady(main);
         }
 
@@ -158,19 +179,39 @@
           update(dt);
           render();
 
+          lastTime = now;
           requestAnimFrame(main);
         }
 
         /**
-          @method main - updates information about game objects like position
+          @method update - updates information about game objects like position
         */
 
         function update(dt) {
-          // console.log("update()");
+          var xPos,
+              yPos,
+              dx,
+              dy,
+              width,
+              height;
 
-          // for (var i = 0, len = fish.length; i < len; i++) {
-          //   fish[i].pos[0] += (1 * dt);
-          // }
+          for (var i = 0, len = fish.length; i < len; i++) {
+            xPos = fish[i].pos[0];
+            dx = fish[i].dx;
+            width = fish[i].size[0];
+
+            if (xPos + width + (dx * dt) > AQUARIUM.width || xPos + (dx * dt) < 0) {
+              fish[i].dx = -dx;
+
+              if (fish[i].dx > 0) { // Moving right
+                fish[i].sprite = fish[i].rightSprite;
+              } else { // Moving left
+                fish[i].sprite = fish[i].leftSprite;
+              }
+            }
+
+            fish[i].pos[0] += (fish[i].dx * dt);
+          }
         }
 
         /**
@@ -184,6 +225,7 @@
 
         /**
           @method renderEntities - helper that loops through game objects and renders them
+          @param {Array} list
         */
 
         function renderEntities(list) {
@@ -194,6 +236,7 @@
 
         /**
           @method renderEntity - draws an individual game object to the screen
+          @param {Object} entity
         */
 
         function renderEntity(entity) {
