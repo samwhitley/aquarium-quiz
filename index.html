@@ -10,200 +10,113 @@
     <script src="scripts/resources.js"></script>
     <script src="scripts/sprite.js"></script>
     <script>
-      var requestAnimFrame = (function() {
-        return window.requestAnimationFrame       ||
-          window.webkitRequestAnimationFrame ||
-          window.mozRequestAnimationFrame    ||
-          window.oRequestAnimationFrame      ||
-          window.msRequestAnimationFrame     ||
-          function(callback){
-            window.setTimeout(callback, 1000 / 60);
-          };
-      })();
-      /*
-        I've got some utilities. Resources and sprites.
-
-        Now I need ot think about how this is going to be laid out.
-
-
-        this is going to draw an unpredictable number of fish.
-
-        all fish move the same way - fish object type
-
-        it needs to identify the color and type
-
-        // Each active fish object. This is the actual object that gets moved around the screen. The color and type are stored as properties so that the JS
-        // can access it.
-
-        fish = {
-          color: blue,
-          type: small,
-          sprite: Sprite(),
-          x: ,
-          y:
-        }
-
-        there should be objects to store info about each of the fishes though
-        large = {
-          height: 200px, // height
-          width: 270px,
-          green: [x,y],
-          red: [x,y],
-          orange: [x,y]
-        }
-
-        // there will be update and render loops
-
-        the game loop will do the best practices thing where it uses requestAnimation frame
-        I'm going to shim this for browsers that don't support it.
-
-        there will need to be a setup function that creates a certain number of fish objects and randomly selects their attributes
-
-        a generic random that picks a random element in an array
-
-        it's also random how many fish are generated, but it needs to stay within a range.
-
-        I guess the function to create the fish objects should run first. Then the render function will be able to show them all at once.
-
-
-
-      */
-
-      var fishSpecs = [
-        {
-          type: "small",
-          size: [57, 26],
-          colors: [
-            {
-              name: "green",
-              pos: [90, 0]
-            },
-            {
-              name: "red",
-              pos: [90, 27]
-            },
-            {
-              name: "orange",
-              pos: [90, 55]
-            }
-          ]
-        },
-        {
-          type: "medium",
-          size: [88, 44],
-          colors: [
-            {
-              name: "green",
-              pos: [0, 0]
-            },
-            {
-              name: "red",
-              pos: [0, 45]
-            },
-            {
-              name: "orange",
-              pos: [0, 90]
-            }
-          ]
-        },
-        {
-          type: "large",
-          size: [97, 101],
-          colors: [
-            {
-              name: "green",
-              pos: [150, 0]
-            },
-            {
-              name: "red",
-              pos: [150, 102]
-            },
-            {
-              name: "orange",
-              pos: [150, 204]
-            }
-          ]
-        }
-      ];
-
       var AQUARIUM = {};
 
       AQUARIUM.game = (function() {
 
+        AQUARIUM.width = 500;
+        AQUARIUM.height = 500;
+
         var requestAnimFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function(callback){ window.setTimeout(callback, 1000 / 60); },
-          canvas,
-          ctx,
-          lastTime,
-          fish = [],
-          fishSpecs = [
-            {
-              type: "small",
-              size: [57, 26],
-              colors: [
-                {
-                  name: "green",
-                  pos: [90, 0]
-                },
-                {
-                  name: "red",
-                  pos: [90, 27]
-                },
-                {
-                  name: "orange",
-                  pos: [90, 55]
-                }
-              ]
-            },
-            {
-              type: "medium",
-              size: [88, 44],
-              colors: [
-                {
-                  name: "green",
-                  pos: [0, 0]
-                },
-                {
-                  name: "red",
-                  pos: [0, 45]
-                },
-                {
-                  name: "orange",
-                  pos: [0, 90]
-                }
-              ]
-            },
-            {
-              type: "large",
-              size: [97, 101],
-              colors: [
-                {
-                  name: "green",
-                  pos: [150, 0]
-                },
-                {
-                  name: "red",
-                  pos: [150, 102]
-                },
-                {
-                  name: "orange",
-                  pos: [150, 204]
-                }
-              ]
-            }
-          ];
+            canvas,
+            ctx,
+            lastTime,
+            fish = [], // all fish objects
+            fishCount = 20 + (Math.floor(Math.random() * 30) + 1), // total number of fish - from 21 to 50
+            fishSpecs = [ // specs for new fish objects
+              {
+                type: "small",
+                size: [57, 26],
+                colors: [
+                  {
+                    name: "green",
+                    pos: [90, 0]
+                  },
+                  {
+                    name: "red",
+                    pos: [90, 27]
+                  },
+                  {
+                    name: "orange",
+                    pos: [90, 55]
+                  }
+                ]
+              },
+              {
+                type: "medium",
+                size: [88, 44],
+                colors: [
+                  {
+                    name: "green",
+                    pos: [0, 0]
+                  },
+                  {
+                    name: "red",
+                    pos: [0, 45]
+                  },
+                  {
+                    name: "orange",
+                    pos: [0, 90]
+                  }
+                ]
+              },
+              {
+                type: "large",
+                size: [97, 101],
+                colors: [
+                  {
+                    name: "green",
+                    pos: [150, 0]
+                  },
+                  {
+                    name: "red",
+                    pos: [150, 102]
+                  },
+                  {
+                    name: "orange",
+                    pos: [150, 204]
+                  }
+                ]
+              }
+            ];
+
+        /**
+          @method randomIndex - picks random index in an array
+
+          @param {Array} arr
+          @return {Number}
+        */
 
         function randomIndex(arr) {
           return Math.floor(Math.random() * arr.length);
         }
+
+        /**
+          @method newFish - creates a new random fish
+
+          @return {Object} newFish - fish object with random starting position, type, and color
+        */
 
         function newFish() {
           var typeIndex = randomIndex(fishSpecs),
               currChoice = fishSpecs[typeIndex],
               colorIndex = randomIndex(currChoice.colors),
               currColor = currChoice.colors[colorIndex],
-              newFish = {};
+              newFish = {},
+              startX = Math.floor(Math.random() * AQUARIUM.width + 1),
+              startY = Math.floor(Math.random() * AQUARIUM.height + 1);
 
-          newFish.pos = [10, 10];
+          // If the object's width extends offscreen, move it left so it fits
+          if (startX + currChoice.size[0] > AQUARIUM.width) {
+            startX -= currChoice.size[0];
+          }
+
+          // If the object's height extends offscreen, move it up so it fits
+          if (startY + currChoice.size[1] > AQUARIUM.height) {
+            startY -= currChoice.size[1];
+          }
+
+          newFish.pos = [startX, startY];
           newFish.type = currChoice.type;
           newFish.color = currColor.name;
           newFish.sprite = new Sprite("images/sprite-sheet.png", currColor.pos, currChoice.size);
@@ -211,75 +124,32 @@
           return newFish;
         }
 
+        /**
+          @method init - initial setup for the game
+        */
+
         function init() {
           console.log("init()");
 
           canvas = document.createElement("canvas");
           ctx = canvas.getContext("2d");
-          canvas.width = 500;
-          canvas.height = 500;
+          canvas.width = AQUARIUM.width;
+          canvas.height = AQUARIUM.height;
           document.body.appendChild(canvas);
 
           lastTime = Date.now();
 
-          fish.push(newFish());
-
-          console.log(fish);
+          for (var i = 0; i < fishCount; i++) {
+            fish.push(newFish());
+          }
 
           resources.load("images/sprite-sheet.png");
           resources.onReady(main);
-
-          // Small fish
-
-          // fish.push({ // Green small
-          //   pos: [10, 10],
-          //   sprite: new Sprite("images/sprite-sheet.png", [90, 0], [57, 26])
-          // });
-
-          // fish.push({ // Red small
-          //   pos: [10, 50],
-          //   sprite: new Sprite("images/sprite-sheet.png", [90, 27], [57, 26])
-          // });
-
-          // fish.push({ // Orange small
-          //   pos: [10, 90],
-          //   sprite: new Sprite("images/sprite-sheet.png", [90, 55], [57, 26])
-          // });
-
-          // // Medium fish
-
-          // fish.push({ // Green medium
-          //   pos: [10, 140],
-          //   sprite: new Sprite("images/sprite-sheet.png", [0, 0], [88, 44])
-          // });
-
-          // fish.push({ // Red medium
-          //   pos: [10, 200],
-          //   sprite: new Sprite("images/sprite-sheet.png", [0, 45], [88, 44])
-          // });
-
-          // fish.push({ // Orange medium
-          //   pos: [10, 260],
-          //   sprite: new Sprite("images/sprite-sheet.png", [0, 90], [88, 44])
-          // });
-
-          // // Large fish
-
-          // fish.push({ // Green large
-          //   pos: [150, 40],
-          //   sprite: new Sprite("images/sprite-sheet.png", [150, 0], [97, 101])
-          // });
-
-          // fish.push({ // Red large
-          //   pos: [150, 140],
-          //   sprite: new Sprite("images/sprite-sheet.png", [150, 102], [97, 101])
-          // });
-
-          // fish.push({ // Orange large
-          //   pos: [150, 240],
-          //   sprite: new Sprite("images/sprite-sheet.png", [150, 204], [97, 101])
-          // });
         }
+
+        /**
+          @method main - main game loop that updates objects and renders them
+        */
 
         function main() {
           var now = Date.now(),
@@ -291,6 +161,10 @@
           requestAnimFrame(main);
         }
 
+        /**
+          @method main - updates information about game objects like position
+        */
+
         function update(dt) {
           // console.log("update()");
 
@@ -299,16 +173,28 @@
           // }
         }
 
+        /**
+          @method render - clears the screen and draws all game objects
+        */
+
         function render() {
           ctx.fillRect(0, 0, canvas.width, canvas.height);
           renderEntities(fish);
         }
 
+        /**
+          @method renderEntities - helper that loops through game objects and renders them
+        */
+
         function renderEntities(list) {
-          for(var i=0; i<list.length; i++) {
+          for(var i=0; i < list.length; i++) {
             renderEntity(list[i]);
           }
         }
+
+        /**
+          @method renderEntity - draws an individual game object to the screen
+        */
 
         function renderEntity(entity) {
           ctx.save();
@@ -322,9 +208,6 @@
         };
       }());
 
-      AQUARIUM.fish = function() {
-
-      };
 
       $(document).ready(function() {
         AQUARIUM.game.init();
