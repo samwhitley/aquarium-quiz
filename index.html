@@ -81,7 +81,31 @@
                   }
                 ]
               }
-            ];
+            ],
+            totals = {
+              fish: 0,
+              red: 0,
+              green: 0,
+              orange: 0,
+              small: {
+                total: 0,
+                red: 0,
+                green: 0,
+                orange: 0
+              },
+              medium: {
+                total: 0,
+                red: 0,
+                green: 0,
+                orange: 0
+              },
+              large: {
+                total: 0,
+                red: 0,
+                green: 0,
+                orange: 0
+              }
+            };
 
         /**
           @method randomIndex - picks random index in an array
@@ -92,6 +116,10 @@
 
         function randomIndex(arr) {
           return Math.floor(Math.random() * arr.length);
+        }
+
+        function getTotals() {
+          return totals;
         }
 
         /**
@@ -108,6 +136,12 @@
               newFish = {},
               startX = Math.floor(Math.random() * AQUARIUM.width + 1),
               startY = Math.floor(Math.random() * AQUARIUM.height + 1);
+
+          // Add the attributes of this fish to the totals object
+          totals["fish"] += 1;
+          totals[currColor.name] += 1;
+          totals[currChoice.type]["total"] += 1;
+          totals[currChoice.type][currColor.name] += 1;
 
           // If the object's width extends offscreen, move it left so it fits
           if (startX + currChoice.size[0] > AQUARIUM.width) {
@@ -258,7 +292,8 @@
         }
 
         return {
-          init: init
+          init: init,
+          getTotals: getTotals
         };
       }());
 
