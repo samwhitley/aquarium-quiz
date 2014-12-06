@@ -12,6 +12,64 @@
     <script>
       var AQUARIUM = {};
 
+      function askQuestion() {
+        var question = {
+              text: "",
+              answer: 0
+            },
+            qNum = Math.random() * 4,
+            optionArr1 = [],
+            optionArr2 = [],
+            option1,
+            option2;
+
+        switch(qNum) {
+          case 0: // "How many fish were there?"
+            question.text = qStr;
+            question.answer = totals.fish;
+            break;
+          case 1: // "How many {green|red|orange|small|medium|large} fish were there?"
+            optionArr1 = [
+              "green",
+              "red",
+              "orange",
+              "small",
+              "medium",
+              "large"
+            ];
+            option1 = randomIndex(optionArr1);
+            question.answer = getAnswer(option1);
+            question.text = "How many " + option1 + " fish were there?";
+            break;
+          case 2: // "Were there more {green|red|orange|small|medium|large} fish than {green|red|orange|small|medium|large} fish?"
+            optionArr1 = qStr.substring((qStr.indexOf("{") + 1), qStr.indexOf("}")).split("|");
+            optionArr2 = qStr.substring((qStr.lastIndexOf("{") + 1), qStr.lastIndexOf("}")).split("|");
+            option1 = randomIndex(optionArr1);
+            option2 = randomIndex(optionArr2);
+            question.answer = getAnswer(option1);
+            question.answer = getAnswer(option2);
+            question.text = qStr.substring(0, (qStr.indexOf("{"))) + option + qStr.substring((qStr.indexOf("}") + 1));
+            break;
+          case 3: // "How many {small|medium|large} {green|red|orange} fish were there?"
+
+
+            break;
+        }
+
+        return question;
+      }
+
+      function getAnswer(option) {
+        var answer;
+        if (typeof totals[option] === "Object") {
+          answer = totals[option]["total"];
+        }
+        else {
+          answer = totals[option];
+        }
+        return answer;
+      }
+
       AQUARIUM.game = (function() {
 
         AQUARIUM.width = 500;
