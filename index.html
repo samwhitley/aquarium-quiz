@@ -12,64 +12,6 @@
     <script>
       var AQUARIUM = {};
 
-      function askQuestion() {
-        var question = {
-              text: "",
-              answer: 0
-            },
-            qNum = Math.random() * 4,
-            optionArr1 = [],
-            optionArr2 = [],
-            option1,
-            option2;
-
-        switch(qNum) {
-          case 0: // "How many fish were there?"
-            question.text = qStr;
-            question.answer = totals.fish;
-            break;
-          case 1: // "How many {green|red|orange|small|medium|large} fish were there?"
-            optionArr1 = [
-              "green",
-              "red",
-              "orange",
-              "small",
-              "medium",
-              "large"
-            ];
-            option1 = randomIndex(optionArr1);
-            question.answer = getAnswer(option1);
-            question.text = "How many " + option1 + " fish were there?";
-            break;
-          case 2: // "Were there more {green|red|orange|small|medium|large} fish than {green|red|orange|small|medium|large} fish?"
-            optionArr1 = qStr.substring((qStr.indexOf("{") + 1), qStr.indexOf("}")).split("|");
-            optionArr2 = qStr.substring((qStr.lastIndexOf("{") + 1), qStr.lastIndexOf("}")).split("|");
-            option1 = randomIndex(optionArr1);
-            option2 = randomIndex(optionArr2);
-            question.answer = getAnswer(option1);
-            question.answer = getAnswer(option2);
-            question.text = qStr.substring(0, (qStr.indexOf("{"))) + option + qStr.substring((qStr.indexOf("}") + 1));
-            break;
-          case 3: // "How many {small|medium|large} {green|red|orange} fish were there?"
-
-
-            break;
-        }
-
-        return question;
-      }
-
-      function getAnswer(option) {
-        var answer;
-        if (typeof totals[option] === "Object") {
-          answer = totals[option]["total"];
-        }
-        else {
-          answer = totals[option];
-        }
-        return answer;
-      }
-
       AQUARIUM.game = (function() {
 
         AQUARIUM.width = 500;
@@ -178,6 +120,106 @@
 
         function getTotals() {
           return totals;
+        }
+
+        function getFishCount(option) {
+          // console.log("getFishCount");
+
+          var answer;
+
+          if (option instanceof Array) {
+            // console.log("getFishCount: option is an array");
+            answer = totals[option[0]][option[1]];
+          }
+          else if (typeof totals[option] === "object") {
+            // console.log("getFishCount: answer is object");
+            answer = totals[option]["total"];
+          }
+          else {
+            // console.log("getFishCount: answer is not object");
+            answer = totals[option];
+          }
+          return answer;
+        }
+
+        function askQuestion(qNum) {
+          // console.log("askQuestion: " + qNum);
+          var question = {
+                text: "",
+                answer: 0
+              },
+              optionArr1 = [],
+              optionArr2 = [],
+              index1,
+              index2,
+              opText1,
+              opText2;
+
+          // console.log(totals);
+          // console.log(qNum);
+
+          switch(qNum) {
+            case 0: // "How many fish were there?"
+              question["text"] = "How many fish were there?";
+              question["answer"] = getFishCount("fish");
+              break;
+            case 1: // "How many {green|red|orange|small|medium|large} fish were there?"
+              optionArr1 = [
+                "green",
+                "red",
+                "orange",
+                "small",
+                "medium",
+                "large"
+              ];
+              index1 = randomIndex(optionArr1);
+              opText1 = optionArr1[index1];
+              question.answer = getFishCount(opText1);
+              question.text = "How many " + opText1 + " fish were there?";
+              break;
+            case 2: // "Were there more {green|red|orange|small|medium|large} fish than {green|red|orange|small|medium|large} fish?"
+              optionArr1 = [
+                "green",
+                "red",
+                "orange",
+                "small",
+                "medium",
+                "large"
+              ];
+              index1 = randomIndex(optionArr1);
+              opText1 = optionArr1[index1];
+
+              optionArr2 = optionArr1.slice(0);
+              optionArr2.splice(index1, 1);
+              index2 = randomIndex(optionArr2);
+              opText2 = optionArr2[index2];
+
+              question.answer = (getFishCount(opText1) > getFishCount(opText2));
+              question.text = "Were there more " + opText1 + " fish than " + opText2 + " fish?";
+              break;
+            case 3: // "How many {small|medium|large} {green|red|orange} fish were there?"
+              optionArr1 = [
+                "small",
+                "medium",
+                "large"
+              ];
+              index1 = randomIndex(optionArr1);
+              opText1 = optionArr1[index1];
+
+              optionArr2 = [
+                "green",
+                "red",
+                "orange"
+              ];
+              index2 = randomIndex(optionArr2);
+              opText2 = optionArr2[index2];
+
+              question.answer = getFishCount([opText1, opText2]);
+              question.text = "How many " + opText1 + " " + opText2 + " fish were there?";
+              break;
+          }
+
+          return question;
         }
 
         /**
@@ -351,10 +393,10 @@
 
         return {
           init: init,
-          getTotals: getTotals
+          getTotals: getTotals,
+          askQuestion: askQuestion
         };
       }());
-
 
       $(document).ready(function() {
         AQUARIUM.game.init();
