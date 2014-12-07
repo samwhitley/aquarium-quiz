@@ -5,10 +5,10 @@
     <meta name="Description" content="A simple game that was made in HTML5 Canvas">
   </head>
   <body>
-
     <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
     <script src="scripts/resources.js"></script>
     <script src="scripts/sprite.js"></script>
+    <script src="scripts/input.js"></script>
     <script>
       var AQUARIUM = {};
 
@@ -17,7 +17,8 @@
         var requestAnimFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function(callback){ window.setTimeout(callback, 1000 / 60); },
             canvas,
             ctx,
-            currentScreen;
+            currentScreen,
+            transitioning = false;
 
         /**
           @method init - initial setup for the game
@@ -36,11 +37,11 @@
 
           document.body.appendChild(canvas);
 
-          currentScreen = AQUARIUM.fishScreen;
+          currentScreen = AQUARIUM.titleScreen;
 
           resources.load(["images/sprites-left.png", "images/sprites-right.png"]);
           resources.onReady(function() {
-            currentScreen.init();
+            // currentScreen.init();
             beginLoop();
           });
         }
@@ -58,6 +59,8 @@
 
             requestAnimFrame(loop);
 
+            ctx.clearRect(0, 0, AQUARIUM.width, AQUARIUM.height);
+
             currentScreen.update(elapsed);
             currentScreen.render(ctx);
 
@@ -68,24 +71,37 @@
         }
 
         /**
-          @method main - main game loop that updates objects and renders them
+          @method changeScreen
+
+          @param {String} screenName - name of the screen to change to
         */
 
-        function main() {
-          console.log("main: main()");
-          var now = Date.now(),
-              dt = (now - lastTime) / 1000.0;
-
-          ctx.clearRect(0, 0, AQUARIUM.width, AQUARIUM.height);
-          currentScreen.update(dt);
-          currentScreen.render(ctx);
-
-          lastTime = now;
-          requestAnimFrame(main);
+        function changeScreen(screenName) {
+          transitioning = true;
+          switch(screenName) {
+            case "title" :
+              currentScreen = AQUARIUM.titleScreen;
+              break;
+            case "menu" :
+              currentScreen = AQUARIUM.menuScreen;
+              break;
+            case "fish" :
+              AQUARIUM.fishScreen.init();
+              currentScreen = AQUARIUM.fishScreen;
+              break;
+            case "question" :
+              currentScreen = AQUARIUM.questionScreen;
+              break;
+            case "result" :
+              currentScreen = AQUARIUM.resultScreen;
+              break;
+          }
+          transitioning = false;
         }
 
         return {
-          init: init
+          init: init,
+          changeScreen: changeScreen
         }
       }());
 
@@ -264,8 +280,6 @@
 
         function render(ctx) {
           var entity;
-
-          ctx.clearRect(0, 0, AQUARIUM.width, AQUARIUM.height);
 
           ctx.fillRect(0, 0, AQUARIUM.width, AQUARIUM.height);
 
@@ -465,6 +479,153 @@
           reset: reset
         };
       }());
+
+      AQUARIUM.titleScreen = (function() {
+        var input = {
+          "isButtonDown": false,
+          "wasButtonDown": false,
+          "justClicked": false
+        };
+
+        /**
+          @method update
+        */
+
+        function update(dt) {
+
+          input.isButtonDown = mouse.isButtonDown();
+          input.justClicked = !input.isButtonDown && input.wasButtonDown;
+
+          if (input.justClicked) {
+            AQUARIUM.main.changeScreen("fish");
+          }
+
+          input.wasButtonDown = input.isButtonDown;
+        }
+
+        /**
+          @method render
+        */
+
+        function render(ctx) {
+
+          ctx.save();
+
+          // Render background
+          ctx.fillStyle = "#2738FF";
+          ctx.fillRect(0, 0, AQUARIUM.width, AQUARIUM.height);
+
+          // Render title
+          ctx.fillStyle = "#FFFFFF";
+          ctx.textAlign = "center";
+
+          ctx.font = "3em sans-serif";
+          ctx.fillText("Puzzle Aquarium", (AQUARIUM.width / 2), ((AQUARIUM.height / 2) - 40));
+
+          ctx.font = "1.5em sans-serif";
+          ctx.fillText("Click to play", (AQUARIUM.width / 2), ((AQUARIUM.height / 2) + 40));
+
+          ctx.restore();
+        }
+
+        return {
+          update: update,
+          render: render
+        };
+      }());
+
+      AQUARIUM.menuScreen = (function() {
+
+        /**
+          @method update
+        */
+
+        function update(dt) {
+
+        }
+
+        /**
+          @method render
+        */
+
+        function render(ctx) {
+          ctx.save();
+
+          // Render bg
+          ctx.fillStyle = "";
+          ctx.fillRect(0, 0, AQUARIUM.width, AQUARIUM.height);
+
+          ctx.restore();
+        }
+
+        return {
+          update: update,
+          render: render
+        };
+      }());
+
+      AQUARIUM.questionScreen = (function() {
+
+        /**
+          @method update
+        */
+
+        function update(dt) {
+
+        }
+
+        /**
+          @method render
+        */
+
+        function render(ctx) {
+
+
+        }
+
+        return {
+
+        };
+      }());
+
+      AQUARIUM.resultScreen = (function() {
+
+        /**
+          @method update
+        */
+
+        function update(dt) {
+
+        }
+
+        /**
+          @method render
+        */
+
+        function render(ctx) {
+
+        }
+
+        return {
+
+        };
+      }());
+
+      /*
+        Thinking of the separate screen objects in this game.
+
+        There is a title screen that will show a background image (or better, some animated fish) and invite the player to click to play
+
+        There is a screen where the player can choose between one or two players
+
+        after the aquarium itself is done, there is a screen where the question is asked.
+
+        With the question, there is a slider where the user can pick their answer.
+          That part might actually be hard to program. I might have something else in the meantime.
+
+        When the user picks an answer, a screen is shown where it displays the correct answer, how close the player's answer is, and gives options to play again (this returns to the player select screen).
+
+      */
 
       $(document).ready(function() {
         AQUARIUM.main.init();
