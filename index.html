@@ -12,6 +12,50 @@
     <script>
       var AQUARIUM = {};
 
+      /*
+        What's left to add
+
+        a title screen - a background image that disappears after a brief timeout
+
+        a number of players selection screen
+
+        a countdown timer that shows you the screen.
+          the countdown timer could be implemented outside of the game logic on the whole.
+          it will need to draw some text to the screen - I can style that later.
+
+        screen is black until I do anything else. it shows a title and has two clickable options.
+          1 player game
+          2 player game
+
+        when the game ends, it asks 'play again?' with a single link. when you click it, it shows the title screen object again where you can select between
+
+
+        main
+
+          starts the loop and holds information about the canvas on the whole.
+
+        utils
+
+          my own custom functions that could be reused in multiple places
+
+        fishScreen
+
+          the screen that has swimming fish. Seriously calling it fishScreen because Aquarium
+          is taken as the name for the whole project.
+      */
+
+      AQUARIUM.main = (function() {
+
+      }());
+
+      AQUARIUM.utils = (function() {
+
+      }());
+
+      AQUARIUM.fishScreen = (function() {
+
+      }());
+
       AQUARIUM.game = (function() {
 
         AQUARIUM.width = 500;
@@ -118,9 +162,21 @@
           return Math.floor(Math.random() * arr.length);
         }
 
+        /**
+          @method getTotals - getter for the totals object
+
+          @return {Object} totals
+        */
+
         function getTotals() {
           return totals;
         }
+
+        /**
+          @method getFishCount - returns the fish count for a given option or set of options
+
+          @return {Number} answer
+        */
 
         function getFishCount(option) {
           // console.log("getFishCount");
@@ -141,6 +197,10 @@
           }
           return answer;
         }
+
+        /**
+          @method askQuestion - generates a question and answer based on the number and type of fish on the screen.
+        */
 
         function askQuestion(qNum) {
           // console.log("askQuestion: " + qNum);
@@ -295,14 +355,26 @@
           canvas.height = AQUARIUM.height;
           document.body.appendChild(canvas);
 
-          lastTime = Date.now();
+          resources.load(["images/sprites-left.png", "images/sprites-right.png"]);
+          resources.onReady(reset);
+        }
+
+        /**
+          @method reset
+        */
+
+        function reset() {
+          console.log("reset");
+
+          fish = [];
 
           for (var i = 0; i < fishCount; i++) {
             fish.push(newFish());
           }
 
-          resources.load(["images/sprites-left.png", "images/sprites-right.png"]);
-          resources.onReady(main);
+          lastTime = Date.now();
+
+          main();
         }
 
         /**
@@ -394,7 +466,8 @@
         return {
           init: init,
           getTotals: getTotals,
-          askQuestion: askQuestion
+          askQuestion: askQuestion,
+          reset: reset
         };
       }());
 
