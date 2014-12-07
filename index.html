@@ -12,60 +12,102 @@
     <script>
       var AQUARIUM = {};
 
-      /*
-        What's left to add
-
-        a title screen - a background image that disappears after a brief timeout
-
-        a number of players selection screen
-
-        a countdown timer that shows you the screen.
-          the countdown timer could be implemented outside of the game logic on the whole.
-          it will need to draw some text to the screen - I can style that later.
-
-        screen is black until I do anything else. it shows a title and has two clickable options.
-          1 player game
-          2 player game
-
-        when the game ends, it asks 'play again?' with a single link. when you click it, it shows the title screen object again where you can select between
-
-
-        main
-
-          starts the loop and holds information about the canvas on the whole.
-
-        utils
-
-          my own custom functions that could be reused in multiple places
-
-        fishScreen
-
-          the screen that has swimming fish. Seriously calling it fishScreen because Aquarium
-          is taken as the name for the whole project.
-      */
-
       AQUARIUM.main = (function() {
-
-      }());
-
-      AQUARIUM.utils = (function() {
-
-      }());
-
-      AQUARIUM.fishScreen = (function() {
-
-      }());
-
-      AQUARIUM.game = (function() {
-
-        AQUARIUM.width = 500;
-        AQUARIUM.height = 500;
 
         var requestAnimFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function(callback){ window.setTimeout(callback, 1000 / 60); },
             canvas,
             ctx,
-            lastTime,
-            fish = [], // all fish objects
+            currentScreen;
+
+        /**
+          @method init - initial setup for the game
+        */
+
+        function init() {
+          console.log("main: init()");
+
+          AQUARIUM.width = 500;
+          AQUARIUM.height = 500;
+
+          canvas = document.createElement("canvas");
+          ctx = canvas.getContext("2d");
+          canvas.width = AQUARIUM.width;
+          canvas.height = AQUARIUM.height;
+
+          document.body.appendChild(canvas);
+
+          currentScreen = AQUARIUM.fishScreen;
+
+          resources.load(["images/sprites-left.png", "images/sprites-right.png"]);
+          resources.onReady(function() {
+            currentScreen.init();
+            beginLoop();
+          });
+        }
+
+        /**
+          @method beginLoop
+        */
+
+        function beginLoop() {
+          var lastFrame = Date.now();
+
+          function loop() {
+            var thisFrame = Date.now(),
+                elapsed = (thisFrame - lastFrame) / 1000.0;
+
+            requestAnimFrame(loop);
+
+            currentScreen.update(elapsed);
+            currentScreen.render(ctx);
+
+            lastFrame = thisFrame;
+          }
+
+          loop();
+        }
+
+        /**
+          @method main - main game loop that updates objects and renders them
+        */
+
+        function main() {
+          console.log("main: main()");
+          var now = Date.now(),
+              dt = (now - lastTime) / 1000.0;
+
+          ctx.clearRect(0, 0, AQUARIUM.width, AQUARIUM.height);
+          currentScreen.update(dt);
+          currentScreen.render(ctx);
+
+          lastTime = now;
+          requestAnimFrame(main);
+        }
+
+        return {
+          init: init
+        }
+      }());
+
+      AQUARIUM.utils = (function() {
+        /**
+          @method randomIndex - picks random index in an array
+
+          @param {Array} arr
+          @return {Number}
+        */
+
+        function randomIndex(arr) {
+          return Math.floor(Math.random() * arr.length);
+        }
+
+        return {
+          randomIndex: randomIndex
+        }
+      }());
+
+      AQUARIUM.fishScreen = (function() {
+        var fish = [], // all fish objects
             fishCount = 30 + (Math.floor(Math.random() * 30) + 1), // total number of fish - from 31 to 60
             fishSpecs = [ // specs for new fish objects
               {
@@ -152,134 +194,88 @@
             };
 
         /**
-          @method randomIndex - picks random index in an array
-
-          @param {Array} arr
-          @return {Number}
+          @method init
         */
 
-        function randomIndex(arr) {
-          return Math.floor(Math.random() * arr.length);
+        function init() {
+          console.log("fishScreen: init");
+
+          reset();
         }
 
         /**
-          @method getTotals - getter for the totals object
-
-          @return {Object} totals
+          @method reset
         */
 
-        function getTotals() {
-          return totals;
+        function reset() {
+          console.log("fishScreen: reset");
+
+          fish = [];
+
+          for (var i = 0; i < fishCount; i++) {
+            fish.push(newFish());
+          }
         }
 
         /**
-          @method getFishCount - returns the fish count for a given option or set of options
-
-          @return {Number} answer
+          @method update - updates information about game objects like position
         */
 
-        function getFishCount(option) {
-          // console.log("getFishCount");
+        function update(dt) {
+          console.log("fishScreen: update");
 
-          var answer;
+          var xPos,
+              yPos,
+              dx,
+              dy,
+              width,
+              height;
 
-          if (option instanceof Array) {
-            // console.log("getFishCount: option is an array");
-            answer = totals[option[0]][option[1]];
+          for (var i = 0, len = fish.length; i < len; i++) {
+            xPos = fish[i].pos[0];
+            yPos = fish[i].pos[1];
+            dx = fish[i].dx;
+            dy = fish[i].dy;
+            width = fish[i].size[0];
+            height = fish[i].size[1];
+
+            if (xPos + width + (dx * dt) > AQUARIUM.width || xPos + (dx * dt) < 0) {
+              fish[i].dx = -dx;
+
+              if (fish[i].dx > 0) { // Moving right
+                fish[i].sprite = fish[i].rightSprite;
+              } else { // Moving left
+                fish[i].sprite = fish[i].leftSprite;
+              }
+            }
+
+            if (yPos + height + (dy * dt) > AQUARIUM.height || yPos + (dy * dt) < 0) {
+              fish[i].dy = -dy;
+            }
+
+            fish[i].pos[0] += (fish[i].dx * dt);
+            fish[i].pos[1] += (fish[i].dy * dt);
           }
-          else if (typeof totals[option] === "object") {
-            // console.log("getFishCount: answer is object");
-            answer = totals[option]["total"];
-          }
-          else {
-            // console.log("getFishCount: answer is not object");
-            answer = totals[option];
-          }
-          return answer;
         }
 
         /**
-          @method askQuestion - generates a question and answer based on the number and type of fish on the screen.
+          @method render - clears the screen and draws all game objects
         */
 
-        function askQuestion(qNum) {
-          // console.log("askQuestion: " + qNum);
-          var question = {
-                text: "",
-                answer: 0
-              },
-              optionArr1 = [],
-              optionArr2 = [],
-              index1,
-              index2,
-              opText1,
-              opText2;
+        function render(ctx) {
+          var entity;
 
-          // console.log(totals);
-          // console.log(qNum);
+          ctx.clearRect(0, 0, AQUARIUM.width, AQUARIUM.height);
 
-          switch(qNum) {
-            case 0: // "How many fish were there?"
-              question["text"] = "How many fish were there?";
-              question["answer"] = getFishCount("fish");
-              break;
-            case 1: // "How many {green|red|orange|small|medium|large} fish were there?"
-              optionArr1 = [
-                "green",
-                "red",
-                "orange",
-                "small",
-                "medium",
-                "large"
-              ];
-              index1 = randomIndex(optionArr1);
-              opText1 = optionArr1[index1];
-              question.answer = getFishCount(opText1);
-              question.text = "How many " + opText1 + " fish were there?";
-              break;
-            case 2: // "Were there more {green|red|orange|small|medium|large} fish than {green|red|orange|small|medium|large} fish?"
-              optionArr1 = [
-                "green",
-                "red",
-                "orange",
-                "small",
-                "medium",
-                "large"
-              ];
-              index1 = randomIndex(optionArr1);
-              opText1 = optionArr1[index1];
+          ctx.fillRect(0, 0, AQUARIUM.width, AQUARIUM.height);
 
-              optionArr2 = optionArr1.slice(0);
-              optionArr2.splice(index1, 1);
-              index2 = randomIndex(optionArr2);
-              opText2 = optionArr2[index2];
-
-              question.answer = (getFishCount(opText1) > getFishCount(opText2));
-              question.text = "Were there more " + opText1 + " fish than " + opText2 + " fish?";
-              break;
-            case 3: // "How many {small|medium|large} {green|red|orange} fish were there?"
-              optionArr1 = [
-                "small",
-                "medium",
-                "large"
-              ];
-              index1 = randomIndex(optionArr1);
-              opText1 = optionArr1[index1];
-
-              optionArr2 = [
-                "green",
-                "red",
-                "orange"
-              ];
-              index2 = randomIndex(optionArr2);
-              opText2 = optionArr2[index2];
-
-              question.answer = getFishCount([opText1, opText2]);
-              question.text = "How many " + opText1 + " " + opText2 + " fish were there?";
-              break;
+          for(var i = 0, len = fish.length; i < len; i++) {
+            entity = fish[i];
+            ctx.save();
+            ctx.translate(entity.pos[0], entity.pos[1]);
+            entity.sprite.render(ctx);
+            ctx.restore();
           }
-
-          return question;
         }
 
         /**
@@ -289,9 +285,9 @@
         */
 
         function newFish() {
-          var typeIndex = randomIndex(fishSpecs),
+          var typeIndex = AQUARIUM.utils.randomIndex(fishSpecs),
               currChoice = fishSpecs[typeIndex],
-              colorIndex = randomIndex(currChoice.colors),
+              colorIndex = AQUARIUM.utils.randomIndex(currChoice.colors),
               currColor = currChoice.colors[colorIndex],
               newFish = {},
               startX = Math.floor(Math.random() * AQUARIUM.width + 1),
@@ -343,136 +339,135 @@
         }
 
         /**
-          @method init - initial setup for the game
+          @method newQuestion - generates a question and answer based on the number and type of fish on the screen.
         */
 
-        function init() {
-          console.log("init()");
+        function newQuestion(qNum) {
+          // console.log("newQuestion: " + qNum);
+          var question = {
+                text: "",
+                answer: 0
+              },
+              optionArr1 = [],
+              optionArr2 = [],
+              index1,
+              index2,
+              opText1,
+              opText2;
 
-          canvas = document.createElement("canvas");
-          ctx = canvas.getContext("2d");
-          canvas.width = AQUARIUM.width;
-          canvas.height = AQUARIUM.height;
-          document.body.appendChild(canvas);
+          // console.log(totals);
+          // console.log(qNum);
 
-          resources.load(["images/sprites-left.png", "images/sprites-right.png"]);
-          resources.onReady(reset);
-        }
+          switch(qNum) {
+            case 0: // "How many fish were there?"
+              question["text"] = "How many fish were there?";
+              question["answer"] = getFishCount("fish");
+              break;
+            case 1: // "How many {green|red|orange|small|medium|large} fish were there?"
+              optionArr1 = [
+                "green",
+                "red",
+                "orange",
+                "small",
+                "medium",
+                "large"
+              ];
+              index1 = AQUARIUM.utils.randomIndex(optionArr1);
+              opText1 = optionArr1[index1];
+              question.answer = getFishCount(opText1);
+              question.text = "How many " + opText1 + " fish were there?";
+              break;
+            case 2: // "Were there more {green|red|orange|small|medium|large} fish than {green|red|orange|small|medium|large} fish?"
+              optionArr1 = [
+                "green",
+                "red",
+                "orange",
+                "small",
+                "medium",
+                "large"
+              ];
+              index1 = AQUARIUM.utils.randomIndex(optionArr1);
+              opText1 = optionArr1[index1];
 
-        /**
-          @method reset
-        */
+              optionArr2 = optionArr1.slice(0);
+              optionArr2.splice(index1, 1);
+              index2 = AQUARIUM.utils.randomIndex(optionArr2);
+              opText2 = optionArr2[index2];
 
-        function reset() {
-          console.log("reset");
+              question.answer = (getFishCount(opText1) > getFishCount(opText2));
+              question.text = "Were there more " + opText1 + " fish than " + opText2 + " fish?";
+              break;
+            case 3: // "How many {small|medium|large} {green|red|orange} fish were there?"
+              optionArr1 = [
+                "small",
+                "medium",
+                "large"
+              ];
+              index1 = AQUARIUM.utils.randomIndex(optionArr1);
+              opText1 = optionArr1[index1];
 
-          fish = [];
+              optionArr2 = [
+                "green",
+                "red",
+                "orange"
+              ];
+              index2 = AQUARIUM.utils.randomIndex(optionArr2);
+              opText2 = optionArr2[index2];
 
-          for (var i = 0; i < fishCount; i++) {
-            fish.push(newFish());
+              question.answer = getFishCount([opText1, opText2]);
+              question.text = "How many " + opText1 + " " + opText2 + " fish were there?";
+              break;
           }
 
-          lastTime = Date.now();
-
-          main();
+          return question;
         }
 
         /**
-          @method main - main game loop that updates objects and renders them
+          @method getTotals - getter for the totals object
+
+          @return {Object} totals
         */
 
-        function main() {
-          var now = Date.now(),
-              dt = (now - lastTime) / 1000.0;
-
-          update(dt);
-          render();
-
-          lastTime = now;
-          requestAnimFrame(main);
+        function getTotals() {
+          return totals;
         }
 
         /**
-          @method update - updates information about game objects like position
+          @method getFishCount - returns the fish count for a given option or set of options
+
+          @return {Number} answer
         */
 
-        function update(dt) {
-          var xPos,
-              yPos,
-              dx,
-              dy,
-              width,
-              height;
+        function getFishCount(option) {
+          // console.log("getFishCount");
 
-          for (var i = 0, len = fish.length; i < len; i++) {
-            xPos = fish[i].pos[0];
-            yPos = fish[i].pos[1];
-            dx = fish[i].dx;
-            dy = fish[i].dy;
-            width = fish[i].size[0];
-            height = fish[i].size[1];
+          var answer;
 
-            if (xPos + width + (dx * dt) > AQUARIUM.width || xPos + (dx * dt) < 0) {
-              fish[i].dx = -dx;
-
-              if (fish[i].dx > 0) { // Moving right
-                fish[i].sprite = fish[i].rightSprite;
-              } else { // Moving left
-                fish[i].sprite = fish[i].leftSprite;
-              }
-            }
-
-            if (yPos + height + (dy * dt) > AQUARIUM.height || yPos + (dy * dt) < 0) {
-              fish[i].dy = -dy;
-            }
-
-            fish[i].pos[0] += (fish[i].dx * dt);
-            fish[i].pos[1] += (fish[i].dy * dt);
+          if (option instanceof Array) {
+            // console.log("getFishCount: option is an array");
+            answer = totals[option[0]][option[1]];
           }
-        }
-
-        /**
-          @method render - clears the screen and draws all game objects
-        */
-
-        function render() {
-          ctx.fillRect(0, 0, canvas.width, canvas.height);
-          renderEntities(fish);
-        }
-
-        /**
-          @method renderEntities - helper that loops through game objects and renders them
-          @param {Array} list
-        */
-
-        function renderEntities(list) {
-          for(var i=0; i < list.length; i++) {
-            renderEntity(list[i]);
+          else if (typeof totals[option] === "object") {
+            // console.log("getFishCount: answer is object");
+            answer = totals[option]["total"];
           }
-        }
-
-        /**
-          @method renderEntity - draws an individual game object to the screen
-          @param {Object} entity
-        */
-
-        function renderEntity(entity) {
-          ctx.save();
-          ctx.translate(entity.pos[0], entity.pos[1]);
-          entity.sprite.render(ctx);
-          ctx.restore();
+          else {
+            // console.log("getFishCount: answer is not object");
+            answer = totals[option];
+          }
+          return answer;
         }
 
         return {
           init: init,
-          getTotals: getTotals,
-          askQuestion: askQuestion,
+          update: update,
+          render: render,
           reset: reset
         };
       }());
 
       $(document).ready(function() {
-        AQUARIUM.game.init();
+        AQUARIUM.main.init();
       });
     </script>
   </body>
