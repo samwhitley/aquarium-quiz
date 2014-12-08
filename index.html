@@ -8,14 +8,12 @@
     <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
     <script src="scripts/resources.js"></script>
     <script src="scripts/sprite.js"></script>
-    <script src="scripts/input.js"></script>
     <script>
       var AQUARIUM = {};
 
       AQUARIUM.main = (function() {
 
         var requestAnimFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function(callback){ window.setTimeout(callback, 1000 / 60); },
-            canvas,
             ctx,
             currentScreen,
             transitioning = false;
@@ -30,20 +28,54 @@
           AQUARIUM.width = 500;
           AQUARIUM.height = 500;
 
-          canvas = document.createElement("canvas");
-          ctx = canvas.getContext("2d");
-          canvas.width = AQUARIUM.width;
-          canvas.height = AQUARIUM.height;
+          AQUARIUM.canvas = document.createElement("canvas");
+          ctx = AQUARIUM.canvas.getContext("2d");
+          AQUARIUM.canvas.width = AQUARIUM.width;
+          AQUARIUM.canvas.height = AQUARIUM.height;
 
-          document.body.appendChild(canvas);
+          document.body.appendChild(AQUARIUM.canvas);
 
-          currentScreen = AQUARIUM.titleScreen;
+          connectEvents();
 
           resources.load(["images/sprites-left.png", "images/sprites-right.png"]);
           resources.onReady(function() {
-            // currentScreen.init();
+            changeScreen("title");
             beginLoop();
           });
+        }
+
+        /**
+          @method connectEvents
+        */
+
+        function connectEvents() {
+          console.log("main: connectEvents");
+
+          var mouse = (function (target) {
+            var isButtonDown = false,
+                x = 0,
+                y = 0;
+
+            target.addEventListener('mousedown', function (ev) {
+              isButtonDown = true;
+              x = ev.clientX - target.offsetLeft;
+              y = ev.clientY - target.offsetTop;
+            });
+
+            target.addEventListener('mouseup', function (ev) {
+              isButtonDown = false;
+              x = ev.clientX - target.offsetLeft;
+              y = ev.clientY - target.offsetTop;
+            });
+
+            return {
+              isButtonDown: function() { return isButtonDown; },
+              x: function() { return x; },
+              y: function() { return y; }
+            };
+          }(AQUARIUM.canvas));
+
+          window.mouse = mouse;
         }
 
         /**
@@ -77,26 +109,28 @@
         */
 
         function changeScreen(screenName) {
-          transitioning = true;
-          switch(screenName) {
-            case "title" :
-              currentScreen = AQUARIUM.titleScreen;
-              break;
-            case "menu" :
-              currentScreen = AQUARIUM.menuScreen;
-              break;
-            case "fish" :
-              AQUARIUM.fishScreen.init();
-              currentScreen = AQUARIUM.fishScreen;
-              break;
-            case "question" :
-              currentScreen = AQUARIUM.questionScreen;
-              break;
-            case "result" :
-              currentScreen = AQUARIUM.resultScreen;
-              break;
+          if (!transitioning) {
+            transitioning = true;
+            switch(screenName) {
+              case "title" :
+                currentScreen = AQUARIUM.titleScreen;
+                break;
+              case "menu" :
+                currentScreen = AQUARIUM.menuScreen;
+                break;
+              case "fish" :
+                AQUARIUM.fishScreen.init();
+                currentScreen = AQUARIUM.fishScreen;
+                break;
+              case "question" :
+                currentScreen = AQUARIUM.questionScreen;
+                break;
+              case "result" :
+                currentScreen = AQUARIUM.resultScreen;
+                break;
+            }
+            transitioning = false;
           }
-          transitioning = false;
         }
 
         return {
@@ -492,12 +526,12 @@
         */
 
         function update(dt) {
-
+          // console.log();
           input.isButtonDown = mouse.isButtonDown();
           input.justClicked = !input.isButtonDown && input.wasButtonDown;
 
           if (input.justClicked) {
-            AQUARIUM.main.changeScreen("fish");
+            AQUARIUM.main.changeScreen("menu");
           }
 
           input.wasButtonDown = input.isButtonDown;
@@ -551,9 +585,16 @@
         function render(ctx) {
           ctx.save();
 
-          // Render bg
-          ctx.fillStyle = "";
+          ctx.fillStyle = "#27662A";
           ctx.fillRect(0, 0, AQUARIUM.width, AQUARIUM.height);
+
+          ctx.fillStyle = "#FFFFFF";
+          ctx.font = "1.5em sans-serif";
+          ctx.textAlign = "center";
+
+          ctx.fillText("Start one player game", (AQUARIUM.width / 2), ((AQUARIUM.height / 2) - 30));
+
+          ctx.fillText("Start two player game", (AQUARIUM.width / 2), ((AQUARIUM.height / 2) + 30));
 
           ctx.restore();
         }
