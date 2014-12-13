@@ -9,6 +9,7 @@
     <script src="scripts/resources.js"></script>
     <script src="scripts/sprite.js"></script>
     <script>
+
       var AQUARIUM = {};
 
       AQUARIUM.main = (function() {
@@ -241,7 +242,9 @@
                 green: 0,
                 orange: 0
               }
-            };
+            },
+            remainingSeconds = 10, // Seconds left to view the fish screen
+            countdownTimer; // target for the countdown timeout
 
         /**
           @method init
@@ -249,6 +252,8 @@
 
         function init() {
           console.log("fishScreen: init");
+
+          countdownTimer = setInterval(countdown, 1000);
 
           reset();
         }
@@ -272,7 +277,7 @@
         */
 
         function update(dt) {
-          console.log("fishScreen: update");
+          // console.log("fishScreen: update");
 
           var xPos,
               yPos,
@@ -315,6 +320,7 @@
         function render() {
           var entity;
 
+          AQUARIUM.ctx.fillStyle = "#000000";
           AQUARIUM.ctx.fillRect(0, 0, AQUARIUM.width, AQUARIUM.height);
 
           for(var i = 0, len = fish.length; i < len; i++) {
@@ -323,6 +329,19 @@
             AQUARIUM.ctx.translate(entity.pos[0], entity.pos[1]);
             entity.sprite.render(AQUARIUM.ctx);
             AQUARIUM.ctx.restore();
+          }
+
+          AQUARIUM.ctx.fillStyle = "#FFFFFF";
+          AQUARIUM.ctx.font = "24pt sans-serif";
+          AQUARIUM.ctx.fillText(remainingSeconds, 50, 50);
+        }
+
+        function countdown() {
+          remainingSeconds -= 1;
+
+          if (remainingSeconds === 0) {
+            clearInterval(countdownTimer);
+            AQUARIUM.main.changeScreen("question");
           }
         }
 
@@ -688,12 +707,23 @@
         */
 
         function render() {
+          AQUARIUM.ctx.save();
+
+          AQUARIUM.ctx.fillStyle = "#D71C40";
+          AQUARIUM.ctx.fillRect(0, 0, AQUARIUM.width, AQUARIUM.height);
 
 
+          AQUARIUM.ctx.fillStyle = "#FFFFFF";
+          AQUARIUM.ctx.font = "24pt sans-serif";
+
+          AQUARIUM.ctx.fillText("Question goes here", 100, 100);
+
+          AQUARIUM.ctx.restore();
         }
 
         return {
-
+          render: render,
+          update: update
         };
       }());
 
