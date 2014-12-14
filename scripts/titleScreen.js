@@ -1,24 +1,14 @@
 AQUARIUM.titleScreen = (function() {
-  var input = {
-    "isButtonDown": false,
-    "wasButtonDown": false,
-    "justClicked": false
-  };
-
   /**
     @method update
   */
 
   function update(dt) {
-    // console.log();
-    input.isButtonDown = mouse.isButtonDown();
-    input.justClicked = !input.isButtonDown && input.wasButtonDown;
+    AQUARIUM.input.setInputState();
 
-    if (input.justClicked) {
+    if (AQUARIUM.input.justClicked()) {
       AQUARIUM.main.changeScreen("menu");
     }
-
-    input.wasButtonDown = input.isButtonDown;
   }
 
   /**

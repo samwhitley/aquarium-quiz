@@ -1,6 +1,6 @@
 AQUARIUM.questionScreen = (function() {
-
-  var totals;
+  var totals,
+      question;
 
   /**
     @method init
@@ -8,6 +8,10 @@ AQUARIUM.questionScreen = (function() {
 
   function init() {
     totals = AQUARIUM.fishScreen.getTotals();
+    question = newQuestion();
+
+    console.log(totals);
+    console.log(question);
   }
 
   /**
@@ -16,6 +20,9 @@ AQUARIUM.questionScreen = (function() {
 
   function update(dt) {
 
+    if (AQUARIUM.input.justClicked()) {
+
+    }
   }
 
   /**
@@ -30,9 +37,15 @@ AQUARIUM.questionScreen = (function() {
 
 
     AQUARIUM.ctx.fillStyle = "#FFFFFF";
-    AQUARIUM.ctx.font = "24pt sans-serif";
+    AQUARIUM.ctx.font = "18pt sans-serif";
 
-    AQUARIUM.ctx.fillText("Question goes here", 100, 100);
+    AQUARIUM.ctx.fillText(question.text, 20, 40);
+
+    // AQUARIUM.ctx.fillText(question.answer, 20, 80);
+
+    AQUARIUM.ctx.fillText("See answer", 20, 340);
+
+    AQUARIUM.ctx.fillText("Play again", 20, 390);
 
     AQUARIUM.ctx.restore();
   }
@@ -67,8 +80,9 @@ AQUARIUM.questionScreen = (function() {
     @method newQuestion - generates a question and answer based on the number and type of fish on the screen.
   */
 
-  function newQuestion(qNum) {
+  function newQuestion() {
     // console.log("newQuestion: " + qNum);
+
     var question = {
           text: "",
           answer: 0
@@ -78,7 +92,8 @@ AQUARIUM.questionScreen = (function() {
         index1,
         index2,
         opText1,
-        opText2;
+        opText2,
+        qNum = Math.floor(Math.random() * 4);
 
     // console.log(totals);
     // console.log(qNum);

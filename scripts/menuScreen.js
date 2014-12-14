@@ -1,11 +1,5 @@
 AQUARIUM.menuScreen = (function() {
-
-  var input = {
-        "isButtonDown": false,
-        "wasButtonDown": false,
-        "justClicked": false
-      },
-      onePlayer = {
+  var onePlayer = {
         text: "Start one player game",
         x: 0,
         y: 0,
@@ -37,15 +31,12 @@ AQUARIUM.menuScreen = (function() {
   */
 
   function update(dt) {
-    input.isButtonDown = mouse.isButtonDown();
-    input.justClicked = !input.isButtonDown && input.wasButtonDown;
+    AQUARIUM.input.setInputState();
 
-    if (input.justClicked) {
-      isTextClicked(onePlayer);
-      isTextClicked(twoPlayer);
+    if (AQUARIUM.input.justClicked()) {
+      AQUARIUM.input.isTextClicked(onePlayer);
+      AQUARIUM.input.isTextClicked(twoPlayer);
     }
-
-    input.wasButtonDown = input.isButtonDown;
   }
 
   /**
@@ -61,39 +52,13 @@ AQUARIUM.menuScreen = (function() {
     AQUARIUM.ctx.fillStyle = "#FFFFFF";
     AQUARIUM.ctx.font = "24pt sans-serif";
 
-    setTextDimensions(onePlayer);
+    AQUARIUM.input.setTextDimensions(onePlayer);
     AQUARIUM.ctx.fillText(onePlayer.text, onePlayer.x, onePlayer.y);
 
-    setTextDimensions(twoPlayer);
+    AQUARIUM.input.setTextDimensions(twoPlayer);
     AQUARIUM.ctx.fillText(twoPlayer.text, twoPlayer.x, twoPlayer.y);
 
     AQUARIUM.ctx.restore();
-  }
-
-  function setTextDimensions(textObj) {
-    textObj.width = AQUARIUM.ctx.measureText(textObj.text).width;
-    textObj.height = parseInt(AQUARIUM.ctx.font);
-
-    textObj.x = (AQUARIUM.width - textObj.width) / 2;
-  }
-
-  function isTextClicked(textObj) {
-    // console.log("isTextClicked()");
-    // console.log(textObj);
-
-    var textClicked = false,
-        mouseX = mouse.x(),
-        mouseY = mouse.y();
-
-    // console.log("x: " + mouseX);
-    // console.log("y: " + mouseY);
-
-    if (mouseX >= textObj.x && mouseX <= textObj.x + textObj.width && mouseY >= textObj.y - textObj.height && mouseY <= textObj.y) {
-      console.log("isTextClicked: you clicked: " + textObj.text);
-      textObj.action();
-    }
-
-    return textClicked;
   }
 
   return {

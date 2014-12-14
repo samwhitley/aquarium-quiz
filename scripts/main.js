@@ -23,47 +23,13 @@ AQUARIUM.main = (function() {
 
     document.body.appendChild(AQUARIUM.canvas);
 
-    connectEvents();
+    AQUARIUM.input.connectEvents();
 
     resources.load(["images/sprites-left.png", "images/sprites-right.png"]);
     resources.onReady(function() {
       changeScreen("title");
       beginLoop();
     });
-  }
-
-  /**
-    @method connectEvents
-  */
-
-  function connectEvents() {
-    console.log("main: connectEvents");
-
-    var mouse = (function (target) {
-      var isButtonDown = false,
-          x = 0,
-          y = 0;
-
-      target.addEventListener('mousedown', function (ev) {
-        isButtonDown = true;
-        x = ev.clientX - target.offsetLeft;
-        y = ev.clientY - target.offsetTop;
-      });
-
-      target.addEventListener('mouseup', function (ev) {
-        isButtonDown = false;
-        x = ev.clientX - target.offsetLeft;
-        y = ev.clientY - target.offsetTop;
-      });
-
-      return {
-        isButtonDown: function() { return isButtonDown; },
-        x: function() { return x; },
-        y: function() { return y; }
-      };
-    }(AQUARIUM.canvas));
-
-    window.mouse = mouse;
   }
 
   /**
@@ -112,6 +78,7 @@ AQUARIUM.main = (function() {
           currentScreen = AQUARIUM.fishScreen;
           break;
         case "question" :
+          AQUARIUM.questionScreen.init();
           currentScreen = AQUARIUM.questionScreen;
           break;
         case "result" :
