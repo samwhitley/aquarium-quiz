@@ -1,4 +1,3 @@
-
 (function() {
     var resourceCache = {};
     var loading = [];
@@ -24,7 +23,7 @@
             var img = new Image();
             img.onload = function() {
                 resourceCache[url] = img;
-                
+
                 if(isReady()) {
                     readyCallbacks.forEach(function(func) { func(); });
                 }
@@ -53,7 +52,7 @@
         readyCallbacks.push(func);
     }
 
-    window.resources = { 
+    window.resources = {
         load: load,
         get: get,
         onReady: onReady,
