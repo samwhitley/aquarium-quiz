@@ -52,10 +52,14 @@ AQUARIUM.menuScreen = (function() {
     AQUARIUM.ctx.fillStyle = "#FFFFFF";
     AQUARIUM.ctx.font = "24pt sans-serif";
 
-    AQUARIUM.input.setTextDimensions(onePlayer);
+    // console.log(AQUARIUM.ctx.font);
+
+    AQUARIUM.input.setTextDimensions(onePlayer, AQUARIUM.ctx);
+    AQUARIUM.input.centerText(onePlayer);
     AQUARIUM.ctx.fillText(onePlayer.text, onePlayer.x, onePlayer.y);
 
-    AQUARIUM.input.setTextDimensions(twoPlayer);
+    AQUARIUM.input.setTextDimensions(twoPlayer, AQUARIUM.ctx);
+    AQUARIUM.input.centerText(twoPlayer);
     AQUARIUM.ctx.fillText(twoPlayer.text, twoPlayer.x, twoPlayer.y);
 
     AQUARIUM.ctx.restore();

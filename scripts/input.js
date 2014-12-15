@@ -47,10 +47,14 @@ AQUARIUM.input = (function() {
     return justClicked;
   }
 
-  function setTextDimensions(textObj) {
-    textObj.width = AQUARIUM.ctx.measureText(textObj.text).width;
-    textObj.height = parseInt(AQUARIUM.ctx.font);
+  function setTextDimensions(textObj, currentCtx) {
+    // console.log("setTextDimensions: " + textObj.text);
+    // console.log(currentCtx.font);
+    textObj.width = currentCtx.measureText(textObj.text).width;
+    textObj.height = parseInt(currentCtx.font);
+  }
 
+  function centerText(textObj) {
     textObj.x = (AQUARIUM.width - textObj.width) / 2;
   }
 
@@ -62,11 +66,11 @@ AQUARIUM.input = (function() {
         mouseX = mouse.x(),
         mouseY = mouse.y();
 
-    // console.log("x: " + mouseX);
-    // console.log("y: " + mouseY);
+    // console.log("isTextClicked: x = " + mouseX);
+    // console.log("isTextClicked: y = " + mouseY);
 
     if (mouseX >= textObj.x && mouseX <= textObj.x + textObj.width && mouseY >= textObj.y - textObj.height && mouseY <= textObj.y) {
-      console.log("isTextClicked: you clicked: " + textObj.text);
+      // console.log("isTextClicked: you clicked: " + textObj.text);
       textObj.action();
     }
 
@@ -78,6 +82,7 @@ AQUARIUM.input = (function() {
     setInputState: setInputState,
     justClicked: justClicked,
     setTextDimensions: setTextDimensions,
+    centerText: centerText,
     isTextClicked: isTextClicked
   };
 }());

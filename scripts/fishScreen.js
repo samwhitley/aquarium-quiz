@@ -60,31 +60,9 @@ AQUARIUM.fishScreen = (function() {
           ]
         }
       ],
-      totals = {
-        fish: 0,
-        red: 0,
-        green: 0,
-        orange: 0,
-        small: {
-          total: 0,
-          red: 0,
-          green: 0,
-          orange: 0
-        },
-        medium: {
-          total: 0,
-          red: 0,
-          green: 0,
-          orange: 0
-        },
-        large: {
-          total: 0,
-          red: 0,
-          green: 0,
-          orange: 0
-        }
-      },
-      remainingSeconds = 3, // Seconds left to view the fish screen
+      totals = {},
+      countdownMax = 3,
+      remainingSeconds = 0, // Seconds left to view the fish screen
       countdownTimer; // target for the countdown timeout
 
   /**
@@ -95,6 +73,31 @@ AQUARIUM.fishScreen = (function() {
     console.log("fishScreen: init");
 
     countdownTimer = setInterval(countdown, 1000);
+
+    totals = {
+      fish: 0,
+      red: 0,
+      green: 0,
+      orange: 0,
+      small: {
+        total: 0,
+        red: 0,
+        green: 0,
+        orange: 0
+      },
+      medium: {
+        total: 0,
+        red: 0,
+        green: 0,
+        orange: 0
+      },
+      large: {
+        total: 0,
+        red: 0,
+        green: 0,
+        orange: 0
+      }
+    };
 
     reset();
   }
@@ -249,6 +252,8 @@ AQUARIUM.fishScreen = (function() {
 
   function reset() {
     console.log("fishScreen: reset");
+
+    remainingSeconds = countdownMax;
 
     fish = [];
 
