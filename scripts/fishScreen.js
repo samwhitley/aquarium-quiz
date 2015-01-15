@@ -61,7 +61,7 @@ AQUARIUM.fishScreen = (function() {
         }
       ],
       totals = {},
-      countdownMax = 3,
+      countdownMax = 5,
       remainingSeconds = 0, // Seconds left to view the fish screen
       countdownTimer; // target for the countdown timeout
 
