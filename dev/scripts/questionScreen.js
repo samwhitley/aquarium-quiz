@@ -6,18 +6,18 @@ AQUARIUM.questionScreen = (function() {
       },
       seeAnswer = {
         text: "See answer",
-        x: 20,
-        y: 340,
-        width: 0,
-        height: 0,
+        x: 55,
+        y: 425,
+        width: 200,
+        height: 50,
         action: seeAnswerAction
       },
       playAgain = {
         text: "Play again",
-        x: 20,
-        y: 390,
-        width: 0,
-        height: 0,
+        x: 325,
+        y: 425,
+        width: 200,
+        height: 50,
         action: playAgainAction
       },
       answer = {
@@ -42,11 +42,22 @@ AQUARIUM.questionScreen = (function() {
   */
 
   function update(dt) {
+    var mouseX,
+        mouseY;
+
     AQUARIUM.input.setInputState();
 
     if (AQUARIUM.input.justClicked()) {
-      AQUARIUM.input.isTextClicked(seeAnswer);
-      AQUARIUM.input.isTextClicked(playAgain);
+      mouseX = mouse.x();
+      mouseY = mouse.y();
+
+      if (mouseX >= 20 && mouseX <= (20 + seeAnswer.width) && mouseY >= 390 && mouseY <= 390 + seeAnswer.height) {
+        seeAnswer.action();
+      }
+
+      if (mouseX >= 280 && mouseX <= (280 + playAgain.width) && mouseY >= 390 && mouseY <= 390 + playAgain.height) {
+        playAgain.action();
+      }
     }
   }
 
@@ -57,24 +68,36 @@ AQUARIUM.questionScreen = (function() {
   function render() {
     AQUARIUM.ctx.save();
 
-    AQUARIUM.ctx.fillStyle = "#D71C40";
+    AQUARIUM.ctx.fillStyle = "#001758";
     AQUARIUM.ctx.fillRect(0, 0, AQUARIUM.width, AQUARIUM.height);
 
+    AQUARIUM.ctx.fillStyle = "#015a01";
+    AQUARIUM.ctx.fillRect(0, 0, AQUARIUM.width, 70);
+
     AQUARIUM.ctx.fillStyle = "#FFFFFF";
-    AQUARIUM.ctx.font = "18pt sans-serif";
+    AQUARIUM.ctx.font = "18px sans-serif";
     AQUARIUM.ctx.textAlign = "left";
 
     AQUARIUM.ctx.fillText(question.text, 20, 40);
 
     if (answer.visible) {
-      AQUARIUM.ctx.fillText(answer.text, 20, 80);
+      AQUARIUM.ctx.fillStyle = "#339900";
+      AQUARIUM.ctx.fillRect(0, 70, AQUARIUM.width, 35);
+      AQUARIUM.ctx.fillStyle = "#FFFFFF";
+      AQUARIUM.ctx.fillText(answer.text, 20, 95);
     }
 
-    AQUARIUM.ctx.fillText(seeAnswer.text, seeAnswer.x, seeAnswer.y);
-    AQUARIUM.input.setTextDimensions(seeAnswer, AQUARIUM.ctx);
 
+    AQUARIUM.ctx.fillStyle = "#af364c";
+    AQUARIUM.ctx.fillRect(20, 390, seeAnswer.width, seeAnswer.height);
+
+    AQUARIUM.ctx.fillStyle = "#af364c";
+    AQUARIUM.ctx.fillRect(280, 390, playAgain.width, playAgain.height);
+
+    AQUARIUM.ctx.font = "24px sans-serif";
+    AQUARIUM.ctx.fillStyle = "#FFFFFF";
+    AQUARIUM.ctx.fillText(seeAnswer.text, seeAnswer.x, seeAnswer.y);
     AQUARIUM.ctx.fillText(playAgain.text, playAgain.x, playAgain.y);
-    AQUARIUM.input.setTextDimensions(playAgain, AQUARIUM.ctx);
 
     AQUARIUM.ctx.restore();
   }
