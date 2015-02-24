@@ -1,4 +1,19 @@
 AQUARIUM.titleScreen = (function() {
+  var titleImage,
+      showStart = true,
+      interval;
+
+  /**
+    @method init
+  */
+
+  function init() {
+    titleImage = new Image();
+    titleImage.src = "images/fyush.png";
+
+    interval = setInterval(flashText, 500);
+  }
+
   /**
     @method update
   */
@@ -11,6 +26,10 @@ AQUARIUM.titleScreen = (function() {
     }
   }
 
+  function flashText() {
+    showStart = !showStart;
+  }
+
   /**
     @method render
   */
@@ -20,23 +39,29 @@ AQUARIUM.titleScreen = (function() {
     AQUARIUM.ctx.save();
 
     // Render background
-    AQUARIUM.ctx.fillStyle = "#2738FF";
+    AQUARIUM.ctx.fillStyle = "#001758";
     AQUARIUM.ctx.fillRect(0, 0, AQUARIUM.width, AQUARIUM.height);
 
     // Render title
     AQUARIUM.ctx.fillStyle = "#FFFFFF";
     AQUARIUM.ctx.textAlign = "center";
 
-    AQUARIUM.ctx.font = "3em sans-serif";
-    AQUARIUM.ctx.fillText("Puzzle Aquarium", (AQUARIUM.width / 2), ((AQUARIUM.height / 2) - 40));
+    // Draw image
+    AQUARIUM.ctx.drawImage(titleImage, 50, 75);
 
-    AQUARIUM.ctx.font = "1.5em sans-serif";
-    AQUARIUM.ctx.fillText("Click to play", (AQUARIUM.width / 2), ((AQUARIUM.height / 2) + 40));
+    AQUARIUM.ctx.font = "3em sans-serif";
+    AQUARIUM.ctx.fillText("Aquarium Quiz", (AQUARIUM.width / 2), 285);
+
+    if (showStart) {
+      AQUARIUM.ctx.font = "1.5em sans-serif";
+      AQUARIUM.ctx.fillText("Click to play", (AQUARIUM.width / 2), 335);
+    }
 
     AQUARIUM.ctx.restore();
   }
 
   return {
+    init: init,
     update: update,
     render: render
   };

@@ -27,7 +27,7 @@ AQUARIUM.main = (function() {
 
     AQUARIUM.input.connectEvents();
 
-    resources.load(["images/sprites-left.png", "images/sprites-right.png"]);
+    resources.load(["images/sprites-left.png", "images/sprites-right.png", "images/fyush.png"]);
     resources.onReady(function() {
       changeScreen("title");
       beginLoop();
@@ -69,6 +69,7 @@ AQUARIUM.main = (function() {
       transitioning = true;
       switch (screenName) {
         case "title":
+          AQUARIUM.titleScreen.init();
           currentScreen = AQUARIUM.titleScreen;
           break;
         case "menu":
