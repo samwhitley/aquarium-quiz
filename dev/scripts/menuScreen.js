@@ -1,20 +1,24 @@
 AQUARIUM.menuScreen = (function() {
   var onePlayer = {
-        text: "Start one player game",
-        x: 0,
-        y: 0,
-        width: 0,
-        height: 0,
-        action: function() { AQUARIUM.main.changeScreen("fish"); }
-      },
-      twoPlayer = {
-        text: "Start two player game",
-        x: 0,
-        y: 0,
-        width: 0,
-        height: 0,
-        action: function() { AQUARIUM.main.changeScreen("fish"); }
-      };
+      text: "Start one player game",
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+      action: function() {
+        AQUARIUM.main.changeScreen("fish");
+      }
+    },
+    twoPlayer = {
+      text: "Start two player game",
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+      action: function() {
+        AQUARIUM.main.changeScreen("fish");
+      }
+    };
 
   /**
     @method init

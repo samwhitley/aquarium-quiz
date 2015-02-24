@@ -1,7 +1,7 @@
 AQUARIUM.input = (function() {
   var isButtonDown,
-      wasButtonDown,
-      justClicked;
+    wasButtonDown,
+    justClicked;
 
   /**
     @method connectEvents
@@ -10,27 +10,33 @@ AQUARIUM.input = (function() {
   function connectEvents() {
     console.log("main: connectEvents");
 
-    var mouse = (function (target) {
+    var mouse = (function(target) {
       var isButtonDown = false,
-          x = 0,
-          y = 0;
+        x = 0,
+        y = 0;
 
-      target.addEventListener('mousedown', function (ev) {
+      target.addEventListener('mousedown', function(ev) {
         isButtonDown = true;
         x = ev.clientX - target.offsetLeft;
         y = ev.clientY - target.offsetTop;
       });
 
-      target.addEventListener('mouseup', function (ev) {
+      target.addEventListener('mouseup', function(ev) {
         isButtonDown = false;
         x = ev.clientX - target.offsetLeft;
         y = ev.clientY - target.offsetTop;
       });
 
       return {
-        isButtonDown: function() { return isButtonDown; },
-        x: function() { return x; },
-        y: function() { return y; }
+        isButtonDown: function() {
+          return isButtonDown;
+        },
+        x: function() {
+          return x;
+        },
+        y: function() {
+          return y;
+        }
       };
     }(AQUARIUM.canvas));
 
@@ -63,8 +69,8 @@ AQUARIUM.input = (function() {
     // console.log(textObj);
 
     var textClicked = false,
-        mouseX = mouse.x(),
-        mouseY = mouse.y();
+      mouseX = mouse.x(),
+      mouseY = mouse.y();
 
     // console.log("isTextClicked: x = " + mouseX);
     // console.log("isTextClicked: y = " + mouseY);

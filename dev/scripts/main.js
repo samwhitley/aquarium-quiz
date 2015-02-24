@@ -2,9 +2,11 @@ var AQUARIUM = {};
 
 AQUARIUM.main = (function() {
 
-  var requestAnimFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function(callback){ window.setTimeout(callback, 1000 / 60); },
-      currentScreen,
-      transitioning = false;
+  var requestAnimFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function(callback) {
+      window.setTimeout(callback, 1000 / 60);
+    },
+    currentScreen,
+    transitioning = false;
 
   /**
     @method init - initial setup for the game
@@ -41,7 +43,7 @@ AQUARIUM.main = (function() {
 
     function loop() {
       var thisFrame = Date.now(),
-          elapsed = (thisFrame - lastFrame) / 1000.0;
+        elapsed = (thisFrame - lastFrame) / 1000.0;
 
       requestAnimFrame(loop);
 
@@ -65,23 +67,23 @@ AQUARIUM.main = (function() {
   function changeScreen(screenName) {
     if (!transitioning) {
       transitioning = true;
-      switch(screenName) {
-        case "title" :
+      switch (screenName) {
+        case "title":
           currentScreen = AQUARIUM.titleScreen;
           break;
-        case "menu" :
+        case "menu":
           AQUARIUM.menuScreen.init();
           currentScreen = AQUARIUM.menuScreen;
           break;
-        case "fish" :
+        case "fish":
           AQUARIUM.fishScreen.init();
           currentScreen = AQUARIUM.fishScreen;
           break;
-        case "question" :
+        case "question":
           AQUARIUM.questionScreen.init();
           currentScreen = AQUARIUM.questionScreen;
           break;
-        case "result" :
+        case "result":
           currentScreen = AQUARIUM.resultScreen;
           break;
       }

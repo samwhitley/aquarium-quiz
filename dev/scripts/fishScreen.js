@@ -16,7 +16,7 @@ AQUARIUM.fishScreen = (function() {
               pos: [90, 27]
             },
             {
-              name: "orange",
+              name: "gold",
               pos: [90, 55]
             }
           ]
@@ -35,7 +35,7 @@ AQUARIUM.fishScreen = (function() {
               pos: [0, 45]
             },
             {
-              name: "orange",
+              name: "gold",
               pos: [0, 90]
             }
           ]
@@ -54,7 +54,7 @@ AQUARIUM.fishScreen = (function() {
               pos: [150, 102]
             },
             {
-              name: "orange",
+              name: "gold",
               pos: [150, 204]
             }
           ]
@@ -78,24 +78,24 @@ AQUARIUM.fishScreen = (function() {
       fish: 0,
       red: 0,
       green: 0,
-      orange: 0,
+      gold: 0,
       small: {
         total: 0,
         red: 0,
         green: 0,
-        orange: 0
+        gold: 0
       },
       medium: {
         total: 0,
         red: 0,
         green: 0,
-        orange: 0
+        gold: 0
       },
       large: {
         total: 0,
         red: 0,
         green: 0,
-        orange: 0
+        gold: 0
       }
     };
 

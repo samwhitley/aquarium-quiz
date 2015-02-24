@@ -138,11 +138,11 @@ AQUARIUM.questionScreen = (function() {
         question["text"] = "How many fish were there?";
         question["answer"] = getFishCount("fish");
         break;
-      case 1: // "How many {green|red|orange|small|medium|large} fish were there?"
+      case 1: // "How many {green|red|gold|small|medium|large} fish were there?"
         optionArr1 = [
           "green",
           "red",
-          "orange",
+          "gold",
           "small",
           "medium",
           "large"
@@ -152,11 +152,11 @@ AQUARIUM.questionScreen = (function() {
         question.answer = getFishCount(opText1);
         question.text = "How many " + opText1 + " fish were there?";
         break;
-      case 2: // "Were there more {green|red|orange|small|medium|large} fish than {green|red|orange|small|medium|large} fish?"
+      case 2: // "Were there more {green|red|gold|small|medium|large} fish than {green|red|gold|small|medium|large} fish?"
         optionArr1 = [
           "green",
           "red",
-          "orange",
+          "gold",
           "small",
           "medium",
           "large"
@@ -172,7 +172,7 @@ AQUARIUM.questionScreen = (function() {
         question.answer = (getFishCount(opText1) > getFishCount(opText2)) ? "Yes" : "No";
         question.text = "Were there more " + opText1 + " fish than " + opText2 + " fish?";
         break;
-      case 3: // "How many {small|medium|large} {green|red|orange} fish were there?"
+      case 3: // "How many {small|medium|large} {green|red|gold} fish were there?"
         optionArr1 = [
           "small",
           "medium",
@@ -184,7 +184,7 @@ AQUARIUM.questionScreen = (function() {
         optionArr2 = [
           "green",
           "red",
-          "orange"
+          "gold"
         ];
         index2 = AQUARIUM.utils.randomIndex(optionArr2);
         opText2 = optionArr2[index2];

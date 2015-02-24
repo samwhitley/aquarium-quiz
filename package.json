@@ -1,0 +1,25 @@
+{
+  "name": "aquarium-quiz",
+  "version": "0.0.0",
+  "description": "A simple observation challenge. My first HTML5 Canvas app.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://samwhitley@bitbucket.org/samwhitley/puzzle-aquarium.git"
+  },
+  "keywords": [
+    "HTML5",
+    "Canvas",
+    "JavaScript",
+    "game"
+  ],
+  "author": "Sam Whitley",
+  "license": "ISC",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-watch": "^0.6.1"
+  }
+}
