@@ -1,6 +1,5 @@
 AQUARIUM.titleScreen = (function() {
-  var titleImage,
-      showStart = true,
+  var showStart = true,
       interval;
 
   /**
@@ -8,9 +7,6 @@ AQUARIUM.titleScreen = (function() {
   */
 
   function init() {
-    titleImage = new Image();
-    titleImage.src = "images/fyush.png";
-
     interval = setInterval(flashText, 500);
   }
 
@@ -22,7 +18,7 @@ AQUARIUM.titleScreen = (function() {
     AQUARIUM.input.setInputState();
 
     if (AQUARIUM.input.justClicked()) {
-      AQUARIUM.main.changeScreen("menu");
+      AQUARIUM.main.changeScreen("instruction");
     }
   }
 
@@ -47,14 +43,14 @@ AQUARIUM.titleScreen = (function() {
     AQUARIUM.ctx.textAlign = "center";
 
     // Draw image
-    AQUARIUM.ctx.drawImage(titleImage, 50, 75);
+    AQUARIUM.ctx.drawImage(resources.get("images/fyush.png"), 50, 75);
 
     AQUARIUM.ctx.font = "3em sans-serif";
     AQUARIUM.ctx.fillText("Aquarium Quiz", (AQUARIUM.width / 2), 285);
 
     if (showStart) {
       AQUARIUM.ctx.font = "1.5em sans-serif";
-      AQUARIUM.ctx.fillText("Click to play", (AQUARIUM.width / 2), 335);
+      AQUARIUM.ctx.fillText("Click anywhere", (AQUARIUM.width / 2), 335);
     }
 
     AQUARIUM.ctx.restore();

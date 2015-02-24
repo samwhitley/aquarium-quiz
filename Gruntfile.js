@@ -12,7 +12,7 @@ module.exports = function (grunt) {
       dev: {
         files: [
           {
-            src: ['dev/scripts/resources.js', 'dev/scripts/sprite.js', 'dev/scripts/main.js', 'dev/scripts/input.js', 'dev/scripts/utils.js', 'dev/scripts/fishScreen.js', 'dev/scripts/titleScreen.js', 'dev/scripts/menuScreen.js', 'dev/scripts/questionScreen.js', 'dev/scripts/resultScreen.js'],
+            src: ['dev/scripts/resources.js', 'dev/scripts/sprite.js', 'dev/scripts/main.js', 'dev/scripts/input.js', 'dev/scripts/utils.js', 'dev/scripts/fishScreen.js', 'dev/scripts/titleScreen.js', 'dev/scripts/instructionScreen.js', 'dev/scripts/questionScreen.js', 'dev/scripts/resultScreen.js'],
             dest: 'build/scripts/min.js'
           }
         ]

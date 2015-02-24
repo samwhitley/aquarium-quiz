@@ -76,6 +76,10 @@ AQUARIUM.main = (function() {
           AQUARIUM.menuScreen.init();
           currentScreen = AQUARIUM.menuScreen;
           break;
+        case "instruction":
+          AQUARIUM.instructionScreen.init();
+          currentScreen = AQUARIUM.instructionScreen;
+          break;
         case "fish":
           AQUARIUM.fishScreen.init();
           currentScreen = AQUARIUM.fishScreen;

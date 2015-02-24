@@ -247,6 +247,16 @@ AQUARIUM.fishScreen = (function() {
   }
 
   /**
+    @method getFishSpecs - getter for the fishSpecs object
+
+    @return {Object} fishSpecs
+  */
+
+  function getFishSpecs() {
+    return fishSpecs;
+  }
+
+  /**
     @method reset
   */
 
@@ -267,6 +277,7 @@ AQUARIUM.fishScreen = (function() {
     update: update,
     render: render,
     reset: reset,
-    getTotals: getTotals
+    getTotals: getTotals,
+    getFishSpecs: getFishSpecs
   };
 }());
