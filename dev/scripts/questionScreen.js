@@ -71,8 +71,8 @@ AQUARIUM.questionScreen = (function() {
     AQUARIUM.ctx.fillStyle = "#001758";
     AQUARIUM.ctx.fillRect(0, 0, AQUARIUM.width, AQUARIUM.height);
 
-    AQUARIUM.ctx.fillStyle = "#015a01";
-    AQUARIUM.ctx.fillRect(0, 0, AQUARIUM.width, 70);
+    AQUARIUM.ctx.fillStyle = "#000"; AQUARIUM.ctx.fillRect(0, 0,
+    AQUARIUM.width, 70);
 
     AQUARIUM.ctx.fillStyle = "#FFFFFF";
     AQUARIUM.ctx.font = "18px sans-serif";
@@ -81,8 +81,8 @@ AQUARIUM.questionScreen = (function() {
     AQUARIUM.ctx.fillText(question.text, 20, 40);
 
     if (answer.visible) {
-      AQUARIUM.ctx.fillStyle = "#339900";
-      AQUARIUM.ctx.fillRect(0, 70, AQUARIUM.width, 35);
+      // AQUARIUM.ctx.fillStyle = "#339900";
+      // AQUARIUM.ctx.fillRect(0, 70, AQUARIUM.width, 35);
       AQUARIUM.ctx.fillStyle = "#FFFFFF";
       AQUARIUM.ctx.fillText(answer.text, 20, 95);
     }
